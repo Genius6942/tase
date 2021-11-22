@@ -60,14 +60,6 @@ class Game {
 			const dy = e.clientY - window.innerHeight / 2;
 			this.angle = Math.atan2(dy, dx) - Math.PI / 2;
 			this.socket.emit('angle', this.angle);
-
-			/*
-			this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-			this.ctx.save();
-			this.ctx.translate(window.innerWidth / 2, window.innerHeight / 2);
-			this.ctx.rotate(this.angle);
-			this.drawPlayer('red');
-			this.ctx.restore();*/
 		});
 
 		socket.on('update', (data) => {
@@ -109,7 +101,7 @@ class Game {
 			}
 			let pos;
 			for (let p of this.main) {
-				if (p.id === this.id) {
+				if (p.id === this.static.id) {
 					pos = p.pos;
 					break;
 				}
@@ -118,13 +110,14 @@ class Game {
 				pos = {x: 0, y: 0};
 			}
 			
+			this.pos = pos;
 			//if (location.href.includes('tase')) alert(JSON.stringify(this.main));
 			for (let player of this.main) {
 				this.ctx.save();
 				//if (player.pos.x === pos.x && player.pos.y === pos.y) alert(JSON.stringify({x: -pos.x + window.innerWidth / 2 -(player.pos.x - pos.x), y: -pos.y + window.innerHeight / 2 - (player.pos.x - pos.x)}));
 				this.ctx.translate(window.innerWidth / 2 -(player.pos.x - pos.x), window.innerHeight / 2 - (player.pos.x - pos.x));
 				this.ctx.rotate(player.angle);
-				this.drawPlayer(player.color);
+				this.drawPlayer(player.color, player.radius);
 				this.ctx.restore();
 			}
 
@@ -134,8 +127,7 @@ class Game {
 		}
 	}
 
-	drawPlayer(color) {
-		const radius = 20;
+	drawPlayer(color, radius = 20, type = false, ) {
 		this.ctx.lineWidth = 2 * radius / 50;
 		this.ctx.fillStyle = color;
 		this.ctx.strokeStyle = 'black';
@@ -154,13 +146,14 @@ class Game {
 		this.ctx.fill();
 		this.ctx.stroke();
 
-		this.ctx.beginPath();
-		this.ctx.moveTo(-radius * 1.2, radius * 1.2);
-		this.ctx.lineTo(0, radius * 1.8);
-		this.ctx.lineTo(radius * 1.2, radius * 1.2);
-		this.ctx.lineWidth = 6 * radius / 50;
-		this.ctx.stroke();
-
+		if (type === 'shield') {
+			this.ctx.beginPath();
+			this.ctx.moveTo(-radius * 1.2, radius * 1.2);
+			this.ctx.lineTo(0, radius * 1.8);
+			this.ctx.lineTo(radius * 1.2, radius * 1.2);
+			this.ctx.lineWidth = 6 * radius / 50;
+			this.ctx.stroke();
+		}
 	}
 }
 

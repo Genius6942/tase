@@ -23,7 +23,11 @@ function makeid(length) {
 
 io.on('connection', (socket) => {
 	const id = makeid(10);
-	io.to(socket.id).emit('id', id);
+	io.to(socket.id).emit('init', {
+		id: id,
+		boardSize: game.boardSize,
+		playerRadius: game.playerRadius,
+	});
 	console.log('Person Joined: ' + id);
 
 	const player = game.addPlayer(id);
@@ -47,6 +51,7 @@ class Game {
 		this.boardSize = 4000; // px i guess
 		this.fps = 60;
 		this.gameLoop = setInterval(this.update.bind(this), 1000 / this.fps);
+		this.playerRadius = 20;
 	}
 
 	addPlayer(id) {
@@ -86,14 +91,18 @@ class Player {
 	constructor (id, game) {
 		this.id = id;
 		this.angle = 0;
-		this.position = new Point(Math.random() * game.boardSize - game.boardSize / 2, Math.random() * game.boardSize - game.boardSize / 2);
+		this.position = new Vector(Math.random() * game.boardSize - game.boardSize / 2, Math.random() * game.boardSize - game.boardSize / 2);
 		this.game = game;
 		this.color = '#' + Math.floor(Math.random()*16777215).toString(16);
     this.health = 10;
+		this.velocity = new Vector();
+		this.radius = this.game.playerRadius;
+    this.x = client.x
+    this.y = client.y
 	}
 
 	getData () {
-		return {pos: this.position.get(), angle: this.angle, color: this.color};
+		return {pos: this.position.get(), angle: this.angle, color: this.color, id: this.id, radius: this.radius};
 	}
 
 	update () {
@@ -101,7 +110,7 @@ class Player {
 	}
 }
 
-class Point {
+class Vector {
 	constructor (x, y) {
 		if (x && y) {
 			this.x = x;
