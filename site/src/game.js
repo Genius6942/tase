@@ -105,6 +105,7 @@ class Game {
 					img.data[cell] += Math.max(0, (25 - value) * 8);
 					img.data[cell + 3] = 255; // alpha.
 				}
+				//$('#bar').style.width = (x / this.static.boardSize * 50).toString() + 'vw';
 			}
 			const c = document.createElement('canvas');
 			const cx = c.getContext('2d');

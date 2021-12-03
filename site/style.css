@@ -138,6 +138,27 @@
 	color: #fff;
 }
 
+#wait .container .bar {
+	position: absolute;
+	bottom: -120px;
+	border: 4px solid #dddddd;
+	background: transparent;
+	width: 50vw;
+	height: 20px;
+}
+
+#wait .conatiner .bar div {
+	width: 50vw;
+	height: 20px;
+	position: relative;
+}
+
+#wait .conatiner .bar div #bar {
+	background: white;
+	width: 50vw;
+	height: 20px;
+}
+
 @keyframes rotate {
 	30%{
 		transform: rotate(220deg);
