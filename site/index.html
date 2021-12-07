@@ -60,9 +60,7 @@
 				Starting up...
 			</div>
 			<div class="bar">
-				<div>
-					<div id="bar"></div>
-				</div>
+				<div id="bar"></div>
 			</div>
 		</div>
 	</div>
@@ -70,7 +68,7 @@
 	<script>
 		localStorage.getItem('color') ? $('#color').value = localStorage.getItem('color') : $('#color').value = '#' + Math.floor(Math.random() * 16777216).toString(16);
 		localStorage.setItem('color', $('#color').value);
-		localStorage.getItem('username') ? $('#username').value = localStorage.getItem('username') : $('#username').value = 'tase.me';
+		localStorage.getItem('username') ? $('#username').value = localStorage.getItem('username') : $('#username').value = 'Player';
 		localStorage.setItem('username', $('#username').value);
 	</script>
   

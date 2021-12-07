@@ -104,11 +104,11 @@
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 }
 
 #wait .container .wrapper {
-	position: absolute;
-	top: -35px;
 	transform: scale(1.5);
 }
 
@@ -129,33 +129,27 @@
 	position: relative;
 }
 
-#wait .container .text{
-	position: absolute;
-	bottom: -85px;
+#wait .container .text {
 	font-size: 25px;
 	font-weight: 400;
 	font-family: 'Poppins', sans-serif;
 	color: #fff;
+	margin-top: 80px;
 }
 
 #wait .container .bar {
-	position: absolute;
-	bottom: -120px;
 	border: 4px solid #dddddd;
 	background: transparent;
 	width: 50vw;
 	height: 20px;
-}
-
-#wait .conatiner .bar div {
-	width: 50vw;
-	height: 20px;
+	margin-top: 20px;
 	position: relative;
+	display: none;
 }
 
-#wait .conatiner .bar div #bar {
+.bar #bar {
 	background: white;
-	width: 50vw;
+	width: 0%;
 	height: 20px;
 }
 

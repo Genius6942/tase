@@ -2,7 +2,7 @@ import Stats from './stats.js';
 import noise from './noise.js';
 
 class Game {
-	constructor (socket) {
+	constructor(socket) {
 		this.socket = socket;
 		this.stats = new Stats();
 		document.body.appendChild(this.stats.dom);
@@ -22,6 +22,24 @@ class Game {
 
 		this.ctx = this.canvas.getContext('2d');
 
+		this.mini = document.getElementById('container').appendChild(document.createElement('div')).appendChild(document.createElement('canvas'));
+		this.mini.style.cssText = `
+			width: 150px;
+			height: 150px;
+			bottom: 70px;
+			right: 30px;
+			position: fixed;
+			border: 7px solid black;
+			background: white;
+			z-index: 105;
+		`;
+		this.mini.width = this.mini.offsetWidth;
+		this.mini.height = this.mini.offsetHeight;
+
+		this.mini.ctx = this.mini.getContext('2d');
+		this.mini.ctx.fillStyle = 'white';
+		this.mini.ctx.fillRect(0, 0, 30, 30);
+
 		const debug = true;
 		if (debug) {
 			window.addEventListener('keydown', (e) => {
@@ -33,25 +51,25 @@ class Game {
 
 		this.main = [];
 
-		
+
 		this.static = {};
 		this.socket.on('init', (initData) => {
 			this.static = initData;
-			this.createNoise();
+			//this.createNoise();
 			$('#username').maxLength = this.static.maxNameLength;
+
+			this.update();
 		});
 
 		socket.on('update', (data) => {
 			this.main = data;
 		});
 
-		this.update();
-		/*
 		this.bg = new Image();
 		this.bg.addEventListener('load', () => {
 			this.bgPattern = this.ctx.createPattern(this.bg, 'repeat');
 		})
-		this.bg.src = location.origin + '/assets/bg.png';*/
+		this.bg.src = location.origin + '/assets/bg.png';
 
 
 		setInterval(this.fps.bind(this), 1000);
@@ -68,10 +86,12 @@ class Game {
 
 		this.socket.on('disconnect', () => {
 			alert('Connection to the server has been lost.');
-		})
+		});
+
+		$('#wait').style.display = 'none';
 	}
 
-	init () {
+	init() {
 		//alert('start');
 		this.socket.emit('init', {
 			name: $('#start form #username').value,
@@ -83,7 +103,7 @@ class Game {
 			this.static.id = id;
 		});
 
-		this.angle = 0; // in radians!
+		this.angle = 0; // in radians
 		window.addEventListener('mousemove', (e) => {
 			const dx = e.clientX - window.innerWidth / 2;
 			const dy = e.clientY - window.innerHeight / 2;
@@ -92,7 +112,7 @@ class Game {
 		});
 	}
 
-	async createNoise () {
+	async createNoise() {
 		try {
 			const img = this.ctx.createImageData(this.static.boardSize, this.static.boardSize);
 			for (var x = 0; x < this.static.boardSize; x++) {
@@ -105,7 +125,7 @@ class Game {
 					img.data[cell] += Math.max(0, (25 - value) * 8);
 					img.data[cell + 3] = 255; // alpha.
 				}
-				//$('#bar').style.width = (x / this.static.boardSize * 50).toString() + 'vw';
+				$('#bar').style.width = (x / this.static.boardSize * 100).toString() + '%';
 			}
 			const c = document.createElement('canvas');
 			const cx = c.getContext('2d');
@@ -118,14 +138,13 @@ class Game {
 			let matrix = document.getElementById('matrixthing')
 			matrix = matrix.createSVGMatrix();
 			this.bgPattern.setTransform(matrix.translate(-this.static.boardHeight / 2, -this.static.boardHeight / 2));
-			$('#wait').style.display = 'none';
 			//window.open(c.toDataURL('image/png'));
 		} catch (e) {
 			alert(e.stack || e.message + ' at ' + e.filename + ':' + e.lineno + ':' + e.colno);
 		}
 	}
 
-	fps () {
+	fps() {
 		document.getElementById('fps').innerHTML = this.frames;
 		//alert(this.frames);
 		this.frames = 0;
@@ -162,25 +181,24 @@ class Game {
 				}
 			}
 			if (!pos) {
-				pos = {x: 0, y: 0};
+				pos = { x: 0, y: 0 };
 			}
-			
+
 			this.pos = pos;
 			//if (location.href.includes('tase')) alert(JSON.stringify(this.main));
 			this.ctx.fillStyle = this.bgPattern || 'white';
 			//this.ctx.fillRect(window.innerWidth / 2 + (-this.static.boardSize / 2 - pos.x), window.innerHeight / 2 +(-this.static.boardSize / 2 - pos.y), this.static.boardSize, this.static.boardSize);
 			this.ctx.save();
 			this.ctx.translate(window.innerWidth / 2 + (0 - pos.x), window.innerHeight / 2 + (0 - pos.y));
-			this.ctx.fillRect(pos.x - window.innerWidth / 2, pos.y - window.innerHeight / 2, window.innerWidth, window.innerHeight,);
+			this.ctx.fillRect(pos.x - window.innerWidth / 2, pos.y - window.innerHeight / 2, window.innerWidth, window.innerHeight);
 			this.ctx.restore();
 
-			
+
 			this.ctx.lineWidth = 10;
 			this.ctx.strokeStyle = 'black';
-			this.ctx.strokeRect(window.innerWidth / 2 + (-this.static.boardSize / 2 - pos.x), window.innerHeight / 2 +(-this.static.boardSize / 2 - pos.y), this.static.boardSize, this.static.boardSize);
+			this.ctx.strokeRect(window.innerWidth / 2 + (-this.static.boardSize / 2 - pos.x), window.innerHeight / 2 + (-this.static.boardSize / 2 - pos.y), this.static.boardSize, this.static.boardSize);
 
 
-			const players = [];
 			for (let player of this.main) {
 				this.ctx.save();
 				//if (player.pos.x === pos.x && player.pos.y === pos.y) alert(JSON.stringify({x: -pos.x + window.innerWidth / 2 -(player.pos.x - pos.x), y: -pos.y + window.innerHeight / 2 - (player.pos.x - pos.x)}));
@@ -188,7 +206,14 @@ class Game {
 				this.ctx.rotate(player.angle - Math.PI / 2);
 				this.drawPlayer(player.color, player.radius, -player.angle + Math.PI / 2, player.name);
 				this.ctx.restore();
-				players.push({x: player.pos.x, y: player.pos.y, isMe: player.id === this.id});
+
+				if (player.id === this.static.id) {
+					this.mini.ctx.clearRect(0, 0, this.mini.width, this.mini.height)
+					this.mini.ctx.fillStyle = player.color;
+					this.mini.ctx.beginPath();
+					this.mini.ctx.arc((player.pos.x + this.static.boardSize / 2) / (this.static.boardSize / this.mini.width), (player.pos.y + this.static.boardSize / 2) / (this.static.boardSize / this.mini.height), this.mini.width / 20, 0, Math.PI * 2);
+					this.mini.ctx.fill();
+				}
 			}
 
 
@@ -201,13 +226,13 @@ class Game {
 		}
 	}
 
-	drawPlayer(color, radius = 20, angle = 0, name = 'tase.me', type = false) {
+	drawPlayer(color, radius = 20, angle = 0, name = 'player', health = 10, type = false) {
 		this.ctx.lineWidth = 2 * radius / 50;
 		this.ctx.fillStyle = color;
 		this.ctx.strokeStyle = 'black';
 		this.ctx.beginPath();
 		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-        this.ctx.fill();
+		this.ctx.fill();
 		this.ctx.stroke();
 
 		this.ctx.beginPath();
@@ -232,8 +257,19 @@ class Game {
 		this.ctx.rotate(angle);
 		this.ctx.font = '20px Arial';
 		this.ctx.textAlign = 'center';
-		this.ctx.fillStyle = 'white';
-		this.ctx.fillText(name, 0, -radius * 2.5);
+		this.ctx.fillStyle = 'black';
+		this.ctx.fillText(name.toString(), 0, -radius * 1.3 - radius / 2.5 - 50);
+		if (health < 100) {
+			this.drawHealthBar(health, -radius * 1.3 - radius / 2.5 - 40);
+		}
+	}
+
+	drawHealthBar(health, top) {
+		const height = 20, width = 80, margin = 3;
+		this.ctx.fillStyle = 'grey';
+		this.ctx.fillRect(-width / 2, top, width, height);
+		this.ctx.fillStyle = health > 60 ? '#00ff00' : health > 20 ? '#ffff00' : '#ff0000';
+		this.ctx.fillRect(-width / 2 + margin, top + margin, (width - margin * 2) * (health / 100), height - margin * 2);
 	}
 }
 
