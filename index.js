@@ -80,7 +80,7 @@ class Game {
 		return player;
 	}
 
-	removePlayer(id) {
+	removePlayer(id) { 
 		const i = this.getPlayerById(id, true);
 		if (i == null) {
 			return false;
@@ -144,6 +144,7 @@ class Game {
 
 	}
 }
+
 
 class Vector {
 	constructor(x, y) {

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<script src="https://genius6942.github.io/query.js">
+	</script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#4285f4">
+	<link rel="stylesheet" href="/style.css">
+	<title>tase.me</title>
+	<script>
+		window.addEventListener('error', (e) => {
+			if (!localStorage.useAlertError) alert(e.stack || e.message + ' at ' + e.filename + ':' + e.lineno + ':' + e.colno);
+			console.error(error);
+		});
+	</script>
+</head>
+
+<body>
+	<script src='https://genius6942.github.io/devtools.js/console.js'>
+	</script>
+	<div id='container'>
+		<div id="ping"></div>
+		<div id="fps"></div>
+		<svg id='matrixthing' style='display: none;'></svg>
+	</div>
+	<div id="start">
+		<form action="" id="first" autocomplete="off" action="...">
+			<label for="username">Your name:</label>
+			<input type="text" name = 'username' placeholder="Name" id="username" oninput="localStorage.setItem('username', $('#username').value);" maxlength="15"/><br>
+			<label for="color">Your player's color:</label><br>
+			<input type="color" name="color" id = 'color' oninput="localStorage.setItem('color', $('#color').value);"><br>
+      		<input type="submit" value = 'Enter the Game!'>
+    </form>
+	</div>
+	<div id = 'wait'>
+		<div class="container">
+			<div class="wrapper">
+				<div class="loader">
+				<div class="dot"></div>
+				</div>
+				<div class="loader">
+				<div class="dot"></div>
+				</div>
+				<div class="loader">
+				<div class="dot"></div>
+				</div>
+				<div class="loader">
+				<div class="dot"></div>
+				</div>
+				<div class="loader">
+				<div class="dot"></div>
+				</div>
+				<div class="loader">
+				<div class="dot"></div>
+				</div>
+			</div>
+			<div class="text">
+				Starting up...
+			</div>
+			<div class="bar">
+				<div id="bar"></div>
+			</div>
+		</div>
+	</div>
+	<script src = './main.js' type = 'module'></script>
+	<script>
+		localStorage.getItem('color') ? $('#color').value = localStorage.getItem('color') : $('#color').value = '#' + Math.floor(Math.random() * 16777216).toString(16);
+		localStorage.setItem('color', $('#color').value);
+		localStorage.getItem('username') ? $('#username').value = localStorage.getItem('username') : $('#username').value = 'Player';
+		localStorage.setItem('username', $('#username').value);
+	</script>
+  
+</body>
+</html>

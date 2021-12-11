@@ -1,5 +1,5 @@
 import Stats from './stats.js';
-import noise from './noise.js';
+import Lightning from './lightning.js';
 
 class Game {
 	constructor(socket) {
@@ -65,6 +65,8 @@ class Game {
 			this.main = data;
 		});
 
+		socket.on('lightning', this.lightning.bind(this));
+
 		this.bg = new Image();
 		this.bg.addEventListener('load', () => {
 			this.bgPattern = this.ctx.createPattern(this.bg, 'repeat');
@@ -112,42 +114,14 @@ class Game {
 		});
 	}
 
-	async createNoise() {
-		try {
-			const img = this.ctx.createImageData(this.static.boardSize, this.static.boardSize);
-			for (var x = 0; x < this.static.boardSize; x++) {
-				for (var y = 0; y < this.static.boardSize; y++) {
-					var value = Math.abs(noise.perlin2(x / 100, y / 100));
-					value *= 256;
-
-					var cell = (x + y * this.static.boardSize) * 4;
-					img.data[cell] = img.data[cell + 1] = img.data[cell + 2] = value;
-					img.data[cell] += Math.max(0, (25 - value) * 8);
-					img.data[cell + 3] = 255; // alpha.
-				}
-				$('#bar').style.width = (x / this.static.boardSize * 100).toString() + '%';
-			}
-			const c = document.createElement('canvas');
-			const cx = c.getContext('2d');
-			c.width = this.static.boardSize;
-			c.height = this.static.boardSize;
-
-			cx.putImageData(img, 0, 0);
-
-			this.bgPattern = this.ctx.createPattern(c, 'repeat');
-			let matrix = document.getElementById('matrixthing')
-			matrix = matrix.createSVGMatrix();
-			this.bgPattern.setTransform(matrix.translate(-this.static.boardHeight / 2, -this.static.boardHeight / 2));
-			//window.open(c.toDataURL('image/png'));
-		} catch (e) {
-			alert(e.stack || e.message + ' at ' + e.filename + ':' + e.lineno + ':' + e.colno);
-		}
-	}
-
 	fps() {
 		document.getElementById('fps').innerHTML = this.frames;
 		//alert(this.frames);
 		this.frames = 0;
+	}
+
+	lightning(p1, p2) {
+		this.lightnings.push(new Lightinig(p1, p2, { fadeTime: 200 }));
 	}
 
 	startPingPong() {
